@@ -15,11 +15,6 @@
 <script>
 export default {
   props: {
-    numero: {
-      type: Number,
-      default: 0,
-    },
-
     busqueda: {
       type: String,
       default: '',

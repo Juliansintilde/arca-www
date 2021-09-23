@@ -72,8 +72,18 @@
             </li>
           </div>
           <span v-if="inicialSeleccionada != ''">
-            <li v-for="(autor, i) in autoresPorInicial(inicialSeleccionada)" :key="`autor${i}`" class="lista-autores">
-              <nuxt-link :to="`/autor/${autor.lastname}?page=1`">{{ autor.lastname }} {{ autor.name }}</nuxt-link>
+            <li
+              v-for="(autor, i) in autoresPorInicial(inicialSeleccionada)"
+              :key="`autor${i}`"
+              class="lista-autores"
+              @click="buscar('author_id', autor.lastname, 'lastname')"
+            >
+              <!-- <nuxt-link :to="`/autor/${autor.lastname}`">{{ autor.lastname }} {{ autor.name }}</nuxt-link> -->
+              <!-- Enlace completo:
+  <nuxt-link :to="`/filtros?autor=${autor.lastname}&pais=${pais.name_spanish}&categoria1=${cat1}`"
+                >{{ autor.lastname }} {{ autor.name }}
+              </nuxt-link> -->
+              <nuxt-link :to="`/filtros?autor=${autor.lastname}`"> {{ autor.lastname }} {{ autor.name }}</nuxt-link>
             </li>
           </span>
         </ul>
