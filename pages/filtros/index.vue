@@ -14,10 +14,10 @@
 
     <template v-else>
       <div class="contenedor-pagina">
-        <DescripcionGaleria :numero="obras.length" :busqueda="autor" />
-        <EtiquetasGaleria :busqueda="$route.params.autor" />
+        <DescripcionGaleria :numero="obras.length" :busqueda="$route.query.autor" />
+        <EtiquetasGaleria :busqueda="$route.query.autor" />
         <Galeria :obras="obras" />
-        <MenuVistas :busqueda="$route.params.autor" />
+        <MenuVistas :busqueda="$route.query.autor" />
       </div>
     </template>
   </div>
@@ -37,11 +37,38 @@ export default {
 
   async fetch() {
     const autor = this.$route.query.autor;
-    const pais = this.$route.query.pais;
-    const categoria = this.$route.query.categoria1;
+    // const pais = this.$route.query.pais;
+    // const categoria = this.$route.query.categoria1;
+
+    const query = gql`
+      query {
+        artworks(filter: { author_id: { lastname: { _eq: "${autor}" } } }, limit: -1) {
+          id
+          title
+          annotation_date
+          synthesis
+          latitude_current
+          longitude_current
+          image {
+            id
+            title
+          }
+          author_id {
+            id
+            name
+            lastname
+            biography
+          }
+          actual_country_id {
+            id
+            name_spanish
+          }
+        }
+      }
+    `;
 
     // if (categoria && autor && pais) {
-    const query = gql`
+    /*  const query = gql`
        query {
         artworks(filter: { _or: [
             {category_1_id: { name: { _eq: "${categoria}" } }},
@@ -102,7 +129,7 @@ export default {
           }
         }
       }
-    `;
+    `; */
     // }
 
     const { artworks } = await this.$graphql.principal.request(query);
