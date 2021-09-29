@@ -11,7 +11,9 @@
       <ul v-if="categoriasVisible">
         <li v-for="(cat1, i) in Object.keys(categorias).sort()" :key="`cat1${i}`" class="cat categoria1 cerrado">
           <span v-if="Object.keys(categorias[cat1]).length" class="abrir" @click="abrir">+</span>
-          <nuxt-link :to="`/categoria/${cat1}?page=1`">{{ cat1 }}</nuxt-link>
+          <span @click="agregarEtiqueta(`${cat1}-c1`)">
+            <nuxt-link :to="`/categoria/${cat1}`">{{ cat1 }}</nuxt-link>
+          </span>
 
           <ul v-if="Object.keys(categorias[cat1]).length">
             <li
@@ -76,24 +78,29 @@
               v-for="(autor, i) in autoresPorInicial(inicialSeleccionada)"
               :key="`autor${i}`"
               class="lista-autores"
-              @click="buscar('author_id', autor.lastname, 'lastname')"
+              @click="agregarEtiqueta(`${autor.lastname}-a`)"
             >
               <!-- <nuxt-link :to="`/autor/${autor.lastname}`">{{ autor.lastname }} {{ autor.name }}</nuxt-link> -->
               <!-- Enlace completo:
   <nuxt-link :to="`/filtros?autor=${autor.lastname}&pais=${pais.name_spanish}&categoria1=${cat1}`"
                 >{{ autor.lastname }} {{ autor.name }}
               </nuxt-link> -->
-              <nuxt-link :to="`/filtros?autor=${autor.lastname}`"> {{ autor.lastname }} {{ autor.name }}</nuxt-link>
-            </li>
-          </span>
+              <nuxt-link :to="`/autor/${autor.lastname}`"> {{ autor.lastname }} {{ autor.name }} </nuxt-link>
+            </li></span
+          >
         </ul>
       </div>
 
       <div class="pantalla">
         <h3 class="seccion" @click="colapsarPaises">Países</h3>
         <ul v-if="paisesVisible">
-          <li v-for="(pais, i) in paises" :key="`autor${i}`" class="lista-autores">
-            <nuxt-link :to="`/mapa/${pais.name_spanish}?page=1`">{{ pais.name_spanish }}</nuxt-link>
+          <li
+            v-for="(pais, i) in paises"
+            :key="`pais${i}`"
+            class="lista-autores"
+            @click="agregarEtiqueta(`${pais.name_spanish}-p`)"
+          >
+            <nuxt-link :to="`/mapa/${pais.name_spanish}`">{{ pais.name_spanish }}</nuxt-link>
           </li>
         </ul>
       </div>
@@ -118,6 +125,11 @@ export default {
       paisesVisible: true,
       iniciales: new Set(),
       inicialSeleccionada: '',
+      etiquetasSeleccionadas: {
+        categoria1: '',
+        autor: '',
+        pais: '',
+      },
     };
   },
   async fetch() {
@@ -314,6 +326,26 @@ export default {
     autoresPorInicial(inicial) {
       const autores = this.autores.filter((autor) => autor.lastname.charAt(0) === inicial);
       return autores;
+    },
+    agregarEtiqueta(etiqueta) {
+      let etiquetaSeleccionada = '';
+      if (etiqueta.endsWith('-a')) {
+        etiquetaSeleccionada = etiqueta.slice(0, -2);
+        this.etiquetasSeleccionadas.autor = etiquetaSeleccionada;
+      } else if (etiqueta.endsWith('-p')) {
+        etiquetaSeleccionada = etiqueta.slice(0, -2);
+        this.etiquetasSeleccionadas.pais = etiquetaSeleccionada;
+      } else if (etiqueta.endsWith('-c1')) {
+        etiquetaSeleccionada = etiqueta.slice(0, -3);
+        this.etiquetasSeleccionadas.categoria1 = etiquetaSeleccionada;
+      }
+      if (
+        this.etiquetasSeleccionadas.categoria1 !== '' &&
+        this.etiquetasSeleccionadas.autor !== '' &&
+        this.etiquetasSeleccionadas.pais !== ''
+      ) {
+        this.enlace = `/filtros?categoria1=${this.etiquetasSeleccionadas.categoria1}&autor=${this.etiquetasSeleccionadas.autor}&pais=${this.etiquetasSeleccionadas.pais}&page=1`;
+      }
     },
   },
 };

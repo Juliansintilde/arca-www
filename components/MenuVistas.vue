@@ -116,6 +116,7 @@ export default {
   color: $claridad;
   padding: 10px;
   position: relative;
+  margin-bottom: 2em;
 }
 input[type='checkbox'] {
   height: 0;

@@ -14,7 +14,7 @@
 
     <template v-else>
       <div>
-        <Mapa />
+        <Mapa :datos="obras" />
       </div>
     </template>
   </div>
