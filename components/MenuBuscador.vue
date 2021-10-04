@@ -12,7 +12,11 @@
         <li v-for="(cat1, i) in Object.keys(categorias).sort()" :key="`cat1${i}`" class="cat categoria1 cerrado">
           <span v-if="Object.keys(categorias[cat1]).length" class="abrir" @click="abrir">+</span>
           <span @click="agregarEtiqueta(`${cat1}-c1`)">
-            <nuxt-link :to="`/categoria/${cat1}`">{{ cat1 }}</nuxt-link>
+            <nuxt-link
+              :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
+            >
+              {{ cat1 }}
+            </nuxt-link>
           </span>
 
           <ul v-if="Object.keys(categorias[cat1]).length">
@@ -82,10 +86,15 @@
             >
               <!-- <nuxt-link :to="`/autor/${autor.lastname}`">{{ autor.lastname }} {{ autor.name }}</nuxt-link> -->
               <!-- Enlace completo:
-  <nuxt-link :to="`/filtros?autor=${autor.lastname}&pais=${pais.name_spanish}&categoria1=${cat1}`"
+  <nuxt-link :to="`/filtros?autor=${autor.lastname}&pais=(||&categoria1=${cat1}`"
                 >{{ autor.lastname }} {{ autor.name }}
               </nuxt-link> -->
-              <nuxt-link :to="`/autor/${autor.lastname}`"> {{ autor.lastname }} {{ autor.name }} </nuxt-link>
+              <!-- <nuxt-link :to="`/autor/${autor.lastname}?page=1`"> {{ autor.lastname }} {{ autor.name }} </nuxt-link> -->
+              <nuxt-link
+                :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
+              >
+                {{ autor.lastname }} {{ autor.name }}
+              </nuxt-link>
             </li></span
           >
         </ul>
@@ -100,7 +109,12 @@
             class="lista-autores"
             @click="agregarEtiqueta(`${pais.name_spanish}-p`)"
           >
-            <nuxt-link :to="`/mapa/${pais.name_spanish}`">{{ pais.name_spanish }}</nuxt-link>
+            <!--<nuxt-link :to="`/mapa/${pais.name_spanish}?page=1`">{{ pais.name_spanish }}</nuxt-link>-->
+            <nuxt-link
+              :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
+            >
+              {{ pais.name_spanish }}
+            </nuxt-link>
           </li>
         </ul>
       </div>
@@ -126,9 +140,9 @@ export default {
       iniciales: new Set(),
       inicialSeleccionada: '',
       etiquetasSeleccionadas: {
-        categoria1: '',
-        autor: '',
-        pais: '',
+        categoria1: null,
+        autor: null,
+        pais: null,
       },
     };
   },
@@ -338,13 +352,6 @@ export default {
       } else if (etiqueta.endsWith('-c1')) {
         etiquetaSeleccionada = etiqueta.slice(0, -3);
         this.etiquetasSeleccionadas.categoria1 = etiquetaSeleccionada;
-      }
-      if (
-        this.etiquetasSeleccionadas.categoria1 !== '' &&
-        this.etiquetasSeleccionadas.autor !== '' &&
-        this.etiquetasSeleccionadas.pais !== ''
-      ) {
-        this.enlace = `/filtros?categoria1=${this.etiquetasSeleccionadas.categoria1}&autor=${this.etiquetasSeleccionadas.autor}&pais=${this.etiquetasSeleccionadas.pais}&page=1`;
       }
     },
   },
