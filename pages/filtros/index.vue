@@ -429,7 +429,6 @@ export default {
       }
       throw new Error('La página no existe');
     }
-    console.log(query);
   },
 
   /**

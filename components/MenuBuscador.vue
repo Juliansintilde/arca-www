@@ -84,12 +84,6 @@
               class="lista-autores"
               @click="agregarEtiqueta(`${autor.lastname}-a`)"
             >
-              <!-- <nuxt-link :to="`/autor/${autor.lastname}`">{{ autor.lastname }} {{ autor.name }}</nuxt-link> -->
-              <!-- Enlace completo:
-  <nuxt-link :to="`/filtros?autor=${autor.lastname}&pais=(||&categoria1=${cat1}`"
-                >{{ autor.lastname }} {{ autor.name }}
-              </nuxt-link> -->
-              <!-- <nuxt-link :to="`/autor/${autor.lastname}?page=1`"> {{ autor.lastname }} {{ autor.name }} </nuxt-link> -->
               <nuxt-link
                 :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
               >
@@ -109,7 +103,6 @@
             class="lista-autores"
             @click="agregarEtiqueta(`${pais.name_spanish}-p`)"
           >
-            <!--<nuxt-link :to="`/mapa/${pais.name_spanish}?page=1`">{{ pais.name_spanish }}</nuxt-link>-->
             <nuxt-link
               :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
             >
