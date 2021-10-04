@@ -89,15 +89,15 @@
               </div>
               <div class="linea">
                 <div class="titulo">Fecha</div>
-                <div class="descripcion">{{ obra.annotation_date }}</div>
+                <div v-if="obra.annotation_date" class="descripcion">{{ obra.annotation_date }}</div>
               </div>
               <div class="linea">
                 <div class="titulo">Tipo</div>
-                <div class="descripcion">{{ obra.type_id.name }}</div>
+                <div v-if="obra.type_id" class="descripcion">{{ obra.type_id.name }}</div>
               </div>
               <div class="linea">
                 <div class="titulo">Fuente de la imagen</div>
-                <div class="descripcion">{{ obra.source_id.name }}</div>
+                <div v-if="obra.source_id" class="descripcion">{{ obra.source_id.name }}</div>
               </div>
               <div class="linea">
                 <div class="titulo">Categorías</div>
