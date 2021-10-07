@@ -12,9 +12,7 @@
         <li v-for="(cat1, i) in Object.keys(categorias).sort()" :key="`cat1${i}`" class="cat categoria1 cerrado">
           <span v-if="Object.keys(categorias[cat1]).length" class="abrir" @click="abrir">+</span>
           <span @click="agregarEtiqueta(`${cat1}-c1`)">
-            <nuxt-link
-              :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
-            >
+            <nuxt-link :to="enlace">
               {{ cat1 }}
             </nuxt-link>
           </span>
@@ -84,11 +82,7 @@
               class="lista-autores"
               @click="agregarEtiqueta(`${autor.lastname}-a`)"
             >
-              <nuxt-link
-                :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
-              >
-                {{ autor.lastname }} {{ autor.name }}
-              </nuxt-link>
+              <nuxt-link :to="enlace"> {{ autor.lastname }} {{ autor.name }} </nuxt-link>
             </li></span
           >
         </ul>
@@ -103,9 +97,7 @@
             class="lista-autores"
             @click="agregarEtiqueta(`${pais.name_spanish}-p`)"
           >
-            <nuxt-link
-              :to="`/filtros?autor=${etiquetasSeleccionadas.autor}&pais=${etiquetasSeleccionadas.pais}&categoria1=${etiquetasSeleccionadas.categoria1}&page=1`"
-            >
+            <nuxt-link :to="enlace">
               {{ pais.name_spanish }}
             </nuxt-link>
           </li>
@@ -132,11 +124,10 @@ export default {
       paisesVisible: true,
       iniciales: new Set(),
       inicialSeleccionada: '',
-      etiquetasSeleccionadas: {
-        categoria1: null,
-        autor: null,
-        pais: null,
-      },
+      categoriaSeleccionada: '',
+      autorSeleccionado: '',
+      paisSeleccionado: '',
+      enlace: '',
     };
   },
   async fetch() {
@@ -338,14 +329,16 @@ export default {
       let etiquetaSeleccionada = '';
       if (etiqueta.endsWith('-a')) {
         etiquetaSeleccionada = etiqueta.slice(0, -2);
-        this.etiquetasSeleccionadas.autor = etiquetaSeleccionada;
+        this.autorSeleccionado = etiquetaSeleccionada;
       } else if (etiqueta.endsWith('-p')) {
         etiquetaSeleccionada = etiqueta.slice(0, -2);
-        this.etiquetasSeleccionadas.pais = etiquetaSeleccionada;
+        this.paisSeleccionado = etiquetaSeleccionada;
       } else if (etiqueta.endsWith('-c1')) {
         etiquetaSeleccionada = etiqueta.slice(0, -3);
-        this.etiquetasSeleccionadas.categoria1 = etiquetaSeleccionada;
+        // this.etiquetasSeleccionadas.categoria1 = etiquetaSeleccionada;
+        this.categoriaSeleccionada = etiquetaSeleccionada;
       }
+      this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
     },
   },
 };
