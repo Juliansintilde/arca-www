@@ -77,10 +77,10 @@ export default {
       query {
         artworks(filter: { _and: [ { _or: [
             {category_1_id: { name: { _eq: ${categoria} } }},
-            {category_2_id: { name: { _eq: null } }},
-            {category_3_id: { name: { _eq: null } }},
-            {category_4_id: { name: { _eq: null } }},
-            {category_5_id: { name: { _eq: null } }},
+            {category_2_id: { name: { _eq: ${categoria} } }},
+            {category_3_id: { name: { _eq: ${categoria} } }},
+            {category_4_id: { name: { _eq: ${categoria} } }},
+            {category_5_id: { name: { _eq: ${categoria} } }},
         ] },
             {author_id: { lastname: { _eq: ${autor} } }},
             { _or: [
