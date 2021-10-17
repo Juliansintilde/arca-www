@@ -27,7 +27,28 @@
           </div>
         </span>
         <!-- <DescripcionGaleria :numero="obras.length" :busqueda="$route.query.autor" /> -->
-        <EtiquetasGaleria :busqueda="$route.query.categoria1" />
+        <div v-for="(etiqueta, i) in etiquetas" :key="`etiqueta-${i}`" @click="$fetch">
+          <!-- <span v-if="etiqueta != null"> -->
+          <!--<EtiquetasGaleria :busqueda="etiquetas[i]" /> -->
+          <div class="categorias-seleccionadas">
+            <div v-if="etiqueta == autorSeleccionado" class="categoria">
+              <nuxt-link :to="`/filtros?autor=&pais=${paisSeleccionado}&categoria1=${categoriaSeleccionada}&page=1`">
+                {{ etiqueta }} X
+              </nuxt-link>
+            </div>
+            <div v-if="etiqueta == paisSeleccionado" class="categoria">
+              <nuxt-link :to="`/filtros?autor=${autorSeleccionado}&pais=&categoria1=${categoriaSeleccionada}&page=1`">
+                {{ etiqueta }} X
+              </nuxt-link>
+            </div>
+            <div v-if="etiqueta == categoriaSeleccionada" class="categoria">
+              <nuxt-link :to="`/filtros?autor=${autorSeleccionado}&pais=${paisSeleccionado}&categoria1=&page=1`">
+                {{ etiqueta }} X
+              </nuxt-link>
+            </div>
+          </div>
+          <!-- </span> -->
+        </div>
         <Galeria :obras="obras" />
         <MenuVistas :busqueda="$route.query.autor" />
       </div>
@@ -48,16 +69,24 @@ export default {
       categoriaSeleccionada: '',
       autorSeleccionado: '',
       paisSeleccionado: '',
+      etiquetas: { pais: '', autor: '', categoria: '' },
+      enlace: '',
     };
   },
 
   async fetch() {
     let autor = `"${this.$route.query.autor}"`;
     this.autorSeleccionado = this.$route.query.autor;
+    // this.etiquetas.push(this.autorSeleccionado);
+    this.etiquetas.autor = this.autorSeleccionado;
     let pais = `"${this.$route.query.pais}"`;
     this.paisSeleccionado = this.$route.query.pais;
+    // this.etiquetas.push(this.paisSeleccionado);
+    this.etiquetas.pais = this.paisSeleccionado;
     let categoria = `"${this.$route.query.categoria1}"`;
     this.categoriaSeleccionada = this.$route.query.categoria1;
+    // this.etiquetas.push(this.categoriaSeleccionada);
+    this.etiquetas.categoria = this.categoriaSeleccionada;
     const page = this.$route.query.page;
 
     if (this.$route.query.autor === null) {
@@ -148,6 +177,25 @@ export default {
     }
   },
 
+  methods: {
+    borrarEtiqueta(etiqueta) {
+      // let enlace = '';
+      // enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
+      if (etiqueta === this.etiquetas.autor) {
+        this.etiquetas.autor = '';
+        this.autorSeleccionado = '';
+      } else if (etiqueta === this.etiquetas.pais) {
+        this.etiquetas.pais = '';
+        this.paisSeleccionado = '';
+      } else if (etiqueta === this.etiquetas.categoria) {
+        this.etiquetas.categoria = '';
+        this.categoriaSeleccionada = '';
+      }
+      console.log(this.etiquetas);
+      // this.etiquetas = this.etiquetas.filter((e) => e !== etiqueta);
+    },
+  },
+
   /**
    * TODO: ver como construir el head con datos del pais.
    */
@@ -169,5 +217,23 @@ export default {
   width: 100vh;
   margin-left: 1em;
   margin-top: 1em;
+}
+
+.categorias-seleccionadas {
+  height: 40px;
+  border-bottom: 1px solid $mediana;
+  flex: 0 0 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  .categoria {
+    background-color: $dolor;
+    color: black;
+    border-radius: 30px;
+    margin-left: 10px;
+    padding: 5px 15px 5px 15px;
+    font-family: $fuenteMenu;
+    cursor: pointer;
+  }
 }
 </style>

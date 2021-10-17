@@ -1,14 +1,10 @@
 <template>
   <div class="categorias-seleccionadas">
     <span v-if="mostrarEtiqueta">
-      <nuxt-link :to="`/archivo`">
-        <div class="categoria" @click="borrarEtiqueta">{{ busqueda }} X</div>
-      </nuxt-link>
+      <!-- <nuxt-link :to="`/archivo`"> -->
+      <div class="categoria" @click="borrarEtiqueta">{{ busqueda }} X</div>
+      <!-- </nuxt-link> -->
     </span>
-    <!-- <div class="categoria">Historia X</div>
-    <div class="categoria">Ciclo Pasion X</div>
-    <div class="categoria">Viacrucis X</div>
-    <div class="categoria">Eclesiastico X</div> -->
   </div>
 </template>
 
