@@ -77,15 +77,12 @@ export default {
   async fetch() {
     let autor = `"${this.$route.query.autor}"`;
     this.autorSeleccionado = this.$route.query.autor;
-    // this.etiquetas.push(this.autorSeleccionado);
     this.etiquetas.autor = this.autorSeleccionado;
     let pais = `"${this.$route.query.pais}"`;
     this.paisSeleccionado = this.$route.query.pais;
-    // this.etiquetas.push(this.paisSeleccionado);
     this.etiquetas.pais = this.paisSeleccionado;
     let categoria = `"${this.$route.query.categoria1}"`;
     this.categoriaSeleccionada = this.$route.query.categoria1;
-    // this.etiquetas.push(this.categoriaSeleccionada);
     this.etiquetas.categoria = this.categoriaSeleccionada;
     const page = this.$route.query.page;
 
@@ -179,20 +176,13 @@ export default {
 
   methods: {
     borrarEtiqueta(etiqueta) {
-      // let enlace = '';
-      // enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
       if (etiqueta === this.etiquetas.autor) {
-        this.etiquetas.autor = '';
-        this.autorSeleccionado = '';
+        this.etiquetas.autor = this.autorSeleccionado = this.$store.state.buscador.etiquetas.autor = '';
       } else if (etiqueta === this.etiquetas.pais) {
-        this.etiquetas.pais = '';
-        this.paisSeleccionado = '';
+        this.etiquetas.pais = this.paisSeleccionado = this.$store.state.buscador.etiquetas.autor = '';
       } else if (etiqueta === this.etiquetas.categoria) {
-        this.etiquetas.categoria = '';
-        this.categoriaSeleccionada = '';
+        this.etiquetas.categoria = this.categoriaSeleccionada = this.$store.state.buscador.etiquetas.categoria = '';
       }
-      console.log(this.etiquetas);
-      // this.etiquetas = this.etiquetas.filter((e) => e !== etiqueta);
     },
   },
 
