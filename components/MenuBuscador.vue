@@ -110,6 +110,7 @@
 <script>
 import { gql } from 'nuxt-graphql-request';
 import { urlImagen } from '../utilidades/ayudas';
+
 export default {
   data() {
     return {
@@ -325,7 +326,15 @@ export default {
       const autores = this.autores.filter((autor) => autor.lastname.charAt(0) === inicial);
       return autores;
     },
+    // TODO: Eliminar variables this.autorSeleccionado, etc. Reemplazar por constantes locales
     agregarEtiqueta(etiqueta) {
+      this.$store.commit('buscador/agregarEtiqueta', etiqueta);
+      this.autorSeleccionado = this.$store.state.buscador.etiquetas.autor;
+      this.paisSeleccionado = this.$store.state.buscador.etiquetas.pais;
+      this.categoriaSeleccionada = this.$store.state.buscador.etiquetas.categoria;
+      this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
+    },
+    /* agregarEtiqueta(etiqueta) {
       let etiquetaSeleccionada = '';
       if (etiqueta.endsWith('-a')) {
         etiquetaSeleccionada = etiqueta.slice(0, -2);
@@ -339,7 +348,7 @@ export default {
         this.categoriaSeleccionada = etiquetaSeleccionada;
       }
       this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
-    },
+    }, */
   },
 };
 </script>

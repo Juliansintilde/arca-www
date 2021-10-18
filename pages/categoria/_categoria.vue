@@ -40,7 +40,8 @@ export default {
     return {
       obras: [],
       pages: [...Array(11).keys()].splice(1),
-      categoria: '',
+      categorias: '',
+      etiquetas: {},
     };
   },
 

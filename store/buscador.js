@@ -4,6 +4,7 @@ export const state = () => ({
   busquedaActual: '',
   seleccionados: [],
   guardados: {},
+  etiquetas: { autor: '', pais: '', categoria: '' },
 });
 
 export const actions = {
@@ -71,5 +72,19 @@ export const mutations = {
 
   usarGuardados(state, artworks) {
     state.seleccionados = artworks;
+  },
+
+  agregarEtiqueta(state, etiqueta) {
+    let etiquetaSeleccionada = '';
+    if (etiqueta.endsWith('-a')) {
+      etiquetaSeleccionada = etiqueta.slice(0, -2);
+      state.etiquetas.autor = etiquetaSeleccionada;
+    } else if (etiqueta.endsWith('-p')) {
+      etiquetaSeleccionada = etiqueta.slice(0, -2);
+      state.etiquetas.pais = etiquetaSeleccionada;
+    } else if (etiqueta.endsWith('-c1')) {
+      etiquetaSeleccionada = etiqueta.slice(0, -3);
+      state.etiquetas.categoria = etiquetaSeleccionada;
+    }
   },
 };
