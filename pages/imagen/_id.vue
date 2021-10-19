@@ -272,7 +272,6 @@ export default {
     cambiarPestana(pestana) {
       this.pestana = pestana;
       this.seleccionado = !this.seleccionado;
-      console.log(this.seleccionado);
     },
     agregarCategorias() {
       const categorias = [];
