@@ -178,11 +178,12 @@ export default {
   methods: {
     borrarEtiqueta(etiqueta) {
       if (etiqueta === this.etiquetas.autor) {
-        this.etiquetas.autor = this.autorSeleccionado = this.$store.state.buscador.etiquetas.autor = '';
+        //  this.etiquetas.autor = this.autorSeleccionado = this.$store.state.buscador.etiquetas.autor = '';
+        this.etiquetas.autor = this.autorSeleccionado = '';
       } else if (etiqueta === this.etiquetas.pais) {
-        this.etiquetas.pais = this.paisSeleccionado = this.$store.state.buscador.etiquetas.autor = '';
+        this.etiquetas.pais = this.paisSeleccionado = '';
       } else if (etiqueta === this.etiquetas.categoria) {
-        this.etiquetas.categoria = this.categoriaSeleccionada = this.$store.state.buscador.etiquetas.categoria = '';
+        this.etiquetas.categoria = this.categoriaSeleccionada = '';
       }
     },
   },

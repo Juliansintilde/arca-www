@@ -327,14 +327,16 @@ export default {
       return autores;
     },
     // TODO: Eliminar variables this.autorSeleccionado, etc. Reemplazar por constantes locales
-    agregarEtiqueta(etiqueta) {
+
+    /* agregarEtiqueta(etiqueta) {
       this.$store.commit('buscador/agregarEtiqueta', etiqueta);
       this.autorSeleccionado = this.$store.state.buscador.etiquetas.autor;
       this.paisSeleccionado = this.$store.state.buscador.etiquetas.pais;
       this.categoriaSeleccionada = this.$store.state.buscador.etiquetas.categoria;
       this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
-    },
-    /* agregarEtiqueta(etiqueta) {
+      console.log(this.$store.state.buscador.etiquetas);
+    }, */
+    agregarEtiqueta(etiqueta) {
       let etiquetaSeleccionada = '';
       if (etiqueta.endsWith('-a')) {
         etiquetaSeleccionada = etiqueta.slice(0, -2);
@@ -344,11 +346,12 @@ export default {
         this.paisSeleccionado = etiquetaSeleccionada;
       } else if (etiqueta.endsWith('-c1')) {
         etiquetaSeleccionada = etiqueta.slice(0, -3);
-        // this.etiquetasSeleccionadas.categoria1 = etiquetaSeleccionada;
         this.categoriaSeleccionada = etiquetaSeleccionada;
       }
-      this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
-    }, */
+      if (this.autorSeleccionado !== '' || this.paisSeleccionado !== '' || this.categoriaSeleccionada !== '') {
+        this.enlace = `/filtros?autor=${this.autorSeleccionado}&pais=${this.paisSeleccionado}&categoria1=${this.categoriaSeleccionada}&page=1`;
+      }
+    },
   },
 };
 </script>
