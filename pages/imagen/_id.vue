@@ -426,12 +426,9 @@ img {
   .botonActivo {
     color: $dolor;
   }
-<<<<<<< HEAD
 }
 button:focus {
   outline: none;
-=======
->>>>>>> e63b9e2 (:ramen: rebase de octub en archivo_etiquetas)
 }
 .informacion-general {
   .linea {
