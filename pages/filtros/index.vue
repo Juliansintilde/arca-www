@@ -16,16 +16,6 @@
 
     <template v-else>
       <div class="contenedor-pagina">
-        <span class="paginas">
-          <div v-for="(page, i) in pages" :key="`page-${i}`" @click="$fetch">
-            <nuxt-link
-              v-if="obras.length == 100"
-              :to="`/filtros?autor=${autorSeleccionado}&pais=${paisSeleccionado}&categoria1=${categoriaSeleccionada}&page=${page}`"
-            >
-              {{ page }}
-            </nuxt-link>
-          </div>
-        </span>
         <!-- <DescripcionGaleria :numero="obras.length" :busqueda="$route.query.autor" /> -->
         <div v-for="(etiqueta, i) in etiquetas" :key="`etiqueta-${i}`" @click="$fetch">
           <!-- <span v-if="etiqueta != null"> -->
@@ -51,6 +41,17 @@
         </div>
         <Galeria :obras="obras" />
         <MenuVistas :busqueda="$route.query.autor" />
+        <span v-if="obras.length == 100" class="paginas">
+          <div class="pag-cont">
+            <div v-for="(page, i) in pages" :key="`page-${i}`" class="num-pag" @click="$fetch">
+              <nuxt-link
+                :to="`/filtros?autor=${autorSeleccionado}&pais=${paisSeleccionado}&categoria1=${categoriaSeleccionada}&page=${page}`"
+              >
+                {{ page }}
+              </nuxt-link>
+            </div>
+          </div>
+        </span>
       </div>
     </template>
   </div>
@@ -204,9 +205,25 @@ export default {
 <style lang="scss" scoped>
 .paginas {
   display: flex;
-  width: 100vh;
-  margin-left: 1em;
-  margin-top: 1em;
+  width: 100%;
+  justify-self: center;
+  align-self: center;
+  margin: 10px;
+  justify-content: center;
+  .pag-cont {
+    width: 350px;
+    display: flex;
+    border: 2px solid $profundidad;
+    border-radius: 200px;
+    justify-content: center;
+    .num-pag {
+      display: flex;
+      justify-content: center;
+      align-self: center;
+      text-align: center;
+      padding: 10px;
+    }
+  }
 }
 
 .categorias-seleccionadas {

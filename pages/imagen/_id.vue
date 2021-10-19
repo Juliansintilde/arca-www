@@ -69,12 +69,6 @@
               proyectos
             </button>
           </div>
-          <!-- <div class="botonera">
-            <button class="botones-imagen" @click="cambiarPestana('datos')">datos</button>
-            <button class="botones-imagen" @click="cambiarPestana('descripcion')">descripcion</button>
-            <button class="botones-imagen" @click="cambiarPestana('personajes')">personajes y gestos</button>
-            <button class="botones-imagen" @click="cambiarPestana('proyectos')">proyectos</button>
-          </div> -->
           <section class="informacion-general">
             <span v-if="pestana == 'datos'">
               <div class="linea">
@@ -184,6 +178,7 @@ export default {
       obra: {},
       pestana: 'datos',
       categorias: [],
+      seleccionado: false,
     };
   },
 
@@ -276,6 +271,8 @@ export default {
     },
     cambiarPestana(pestana) {
       this.pestana = pestana;
+      this.seleccionado = !this.seleccionado;
+      console.log(this.seleccionado);
     },
     agregarCategorias() {
       const categorias = [];
@@ -429,9 +426,12 @@ img {
   .botonActivo {
     color: $dolor;
   }
+<<<<<<< HEAD
 }
 button:focus {
   outline: none;
+=======
+>>>>>>> e63b9e2 (:ramen: rebase de octub en archivo_etiquetas)
 }
 .informacion-general {
   .linea {
