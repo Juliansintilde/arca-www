@@ -9,6 +9,7 @@
     <section v-else class="contenido">
       <MenuVistas />
       <nuxt-link class="enlace-archivo" to="/archivo/paises">Lugares</nuxt-link>
+      <VisualizacionBarras :obras="obras" />
     </section>
   </div>
 </template>
@@ -16,8 +17,10 @@
 <script>
 import { gql } from 'nuxt-graphql-request';
 import { crearHead, urlImagen } from '../../utilidades/ayudas';
+import VisualizacionBarras from '~/components/VisualizacionBarras.vue';
 
 export default {
+  components: { VisualizacionBarras },
   layout: 'conBuscador',
   data() {
     return {
