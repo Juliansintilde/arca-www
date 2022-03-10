@@ -2,12 +2,26 @@
   <div id="contenedor-grafica">
     <!-- Barras -->
     <svg id="grafica">
-      <g id="cuerpo" style="transform: translate(80px, 53px)"></g>
+      <g id="cuerpo" style="transform: translate(180px, 52px)"></g>
       <g id="yAxis"></g>
       <g id="xAxis"></g>
     </svg>
     <div>
-      <button id="boton" @click="graficarBarras(obras, 'tipo_relato_visual')">Graficar cantidad de obras por:</button>
+      <span id="boton">
+        <div class="pantalla">
+          <h3 class="seccion" @click="desplegar">Graficar cantidad de obras por:</h3>
+          <ul class="menu-propiedades">
+            <li
+              v-for="(propiedad, i) in propiedades"
+              id="propiedad"
+              :key="`propiedad${i}`"
+              @click="graficarBarras(obras, propiedad.menu)"
+            >
+              {{ propiedad.nombre }}
+            </li>
+          </ul>
+        </div>
+      </span>
     </div>
   </div>
 </template>
@@ -23,14 +37,14 @@ export default {
       pagina: {},
       obras: [],
       obrasSeleccionadas: [],
-      gato: 0,
+      propiedades: [],
     };
   },
 
   async fetch() {
     const query = gql`
       query {
-        obra(limit: 1999) {
+        obra(limit: 9999) {
           arca_id
           fechas_actividad
           ubicacion_actual {
@@ -38,6 +52,30 @@ export default {
           }
           autor {
             apellido
+            nombre
+          }
+          complejidad_gestual {
+            nombre
+          }
+          cuerpo_imagen {
+            nombre
+          }
+          disposicion_corporal {
+            nombre
+          }
+          donante {
+            nombre
+          }
+          escenario {
+            nombre
+          }
+          rostro {
+            nombre
+          }
+          tecnica {
+            nombre
+          }
+          tipo_gestual {
             nombre
           }
           tipo_relato_visual {
@@ -58,10 +96,27 @@ export default {
       throw new Error('La página no existe');
     }
 
-    this.graficarBarras(this.obras, 'tipo_relato_visual');
+    // this.graficarBarras(this.obras, 'tipo_relato_visual');
+    this.propiedades.push(
+      { nombre: 'Complejidad gestual', menu: 'complejidad_gestual' },
+      { nombre: 'Cuerpo', menu: 'cuerpo_imagen' },
+      { nombre: 'Disposición corporal', menu: 'disposicion_corporal' },
+      { nombre: 'Donante', menu: 'donante' },
+      { nombre: 'Escenario', menu: 'escenario' },
+      { nombre: 'Relato visual', menu: 'tipo_relato_visual' },
+      { nombre: 'Rostro', menu: 'rostro' },
+      // { nombre: 'Símbolo', menu: 'simbolo' },
+      { nombre: 'Tipo gestual', menu: 'tipo_gestual' }
+      // { nombre: 'Ubicación', menu: 'ubicacion_actual' }
+    );
   },
 
   methods: {
+    // TODO: Mover a utilidades - ayudas
+    desplegar(evento) {
+      const contenedor = evento.target.parentElement;
+      contenedor.classList.toggle('abierto');
+    },
     crearSet(lista, criterio) {
       this.ordenarLista(lista, criterio);
       const listaCriterio = [];
@@ -73,12 +128,10 @@ export default {
         }
         // Si se grafica por un criterio que tiene propiedades
       } else {
-        if (criterio === 'tipo_relato_visual') {
-          propiedad = 'nombre';
-        }
-        for (const i of lista) {
-          listaCriterio.push(i[criterio][`${propiedad}`]);
-        }
+        propiedad = 'nombre';
+      }
+      for (const i of lista) {
+        listaCriterio.push(i[criterio][`${propiedad}`]);
       }
       const set = new Set(listaCriterio);
       return set;
@@ -100,9 +153,8 @@ export default {
           cuenta.nombre = result[0][criterio];
           // Si se grafica por un criterio que tiene propiedades
         } else {
-          if (criterio === 'tipo_relato_visual') {
-            propiedad = 'nombre';
-          }
+          propiedad = 'nombre';
+
           result = this.obras.filter((obra) => obra[criterio][`${propiedad}`] === Array.from(set)[i]);
           cuenta.nombre = result[0][criterio][`${propiedad}`];
         }
@@ -126,23 +178,24 @@ export default {
       }
     },
 
+    borrarGrafica() {
+      const grafica = d3.select('#grafica');
+      grafica.remove();
+    },
+
     graficarBarras(lista, criterio) {
       this.obtenerCantidadObras(lista, criterio);
       // Variables para d3
       const obras = this.obrasSeleccionadas;
-      const contenedorBarras = d3.select('#grafica');
+      const grafica = d3.select('#grafica');
       const cuerpo = d3.select('#cuerpo');
-      const anchoContenedor = 700;
-      const altoContenedor = 400;
-      // Limpiar lienzo
-      cuerpo.selectAll('rect').remove();
-      cuerpo.selectAll('circle').remove();
-
-      contenedorBarras.style('width', anchoContenedor).style('height', altoContenedor);
 
       const max = d3.max(obras, (d) => d.cantidad);
+      const maxDomain = 700;
+      const anchoContenedor = 1000;
+      const altoContenedor = 400;
       const altura = 270;
-      const amountScale = d3.scaleLinear().range([0, 500]).domain([0, max]);
+      const amountScale = d3.scaleLinear().domain([0, max]).range([0, maxDomain]);
 
       const scalePosition = d3
         .scaleBand()
@@ -150,7 +203,20 @@ export default {
         .domain(obras.map((d) => d.nombre));
       scalePosition.padding(0.8);
 
+      // Ejes
+      const xAxis = d3.axisBottom(amountScale);
+      const yAxis = d3.axisLeft(scalePosition);
+      let textoEje = '';
+
+      // Limpiar lienzo
+      cuerpo.selectAll('rect').remove();
+      cuerpo.selectAll('circle').remove();
+      grafica.selectAll('.textoEje').remove();
+
       const join = cuerpo.selectAll('rect').data(obras);
+
+      grafica.style('width', anchoContenedor).style('height', altoContenedor);
+
       // Dibujar líneas
       join
         .enter()
@@ -170,17 +236,26 @@ export default {
         .attr('cx', (d) => amountScale(d.cantidad))
         .attr('cy', (d) => scalePosition(d.nombre));
 
-      const xAxis = d3.axisBottom(amountScale);
       xAxis.ticks(10);
       d3.select('#xAxis')
         .call(xAxis)
-        .attr('transform', `translate(80, ${altura + 50})`);
-      d3.select('#xAxis').append('text').text('Cantidad').attr('transform', `translate(550, 5)`).style('fill', 'black');
+        .attr('transform', `translate(180, ${altura + 50})`);
+      d3.select('#xAxis')
+        .append('text')
+        .text('Cantidad')
+        .attr('class', 'textoEje')
+        .attr('transform', `translate(${maxDomain + 25}, 5)`)
+        .style('fill', '#af2828');
 
-      const yAxis = d3.axisLeft(scalePosition);
-      const textoEje = this.limpiarTexto(criterio);
-      d3.select('#yAxis').call(yAxis).attr('transform', 'translate(80, 50)');
-      d3.select('#yAxis').append('text').text(textoEje).attr('transform', 'translate(0, -5)').style('fill', 'black');
+      textoEje = this.limpiarTexto(criterio);
+
+      d3.select('#yAxis').call(yAxis).attr('transform', 'translate(180, 50)');
+      d3.select('#yAxis')
+        .append('text')
+        .text(textoEje)
+        .attr('class', 'textoEje')
+        .attr('transform', 'translate(0, -5)')
+        .style('fill', '#af2828');
     },
 
     // TODO: pasar esta función a utilidades-ayudas
@@ -201,6 +276,6 @@ export default {
 }
 #grafica {
   height: inherit;
-  margin: 2em;
+  margin: 0em;
 }
 </style>
