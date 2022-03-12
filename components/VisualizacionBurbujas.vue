@@ -1,21 +1,20 @@
 <template>
   <div id="contenedor-grafica">
     <!-- Barras -->
-    <svg id="grafica">
-      <g id="cuerpo" style="transform: translate(180px, 52px)"></g>
+    <div id="grafica">
       <g id="yAxis"></g>
       <g id="xAxis"></g>
-    </svg>
+    </div>
     <div>
       <span id="boton">
         <div class="pantalla">
-          <h3 class="seccion" @click="desplegar">Graficar cantidad de obras por:</h3>
+          <h3 class="seccion" @click="desplegar">Graficar barras por:</h3>
           <ul class="menu-propiedades">
             <li
               v-for="(propiedad, i) in propiedades"
               id="propiedad"
               :key="`propiedad${i}`"
-              @click="graficarBarras(obras, propiedad.menu)"
+              @click="graficarBurbujas(obras, propiedad.menu)"
             >
               {{ propiedad.nombre }}
             </li>
@@ -178,79 +177,29 @@ export default {
       }
     },
 
-    graficarBarras(lista, criterio) {
-      this.obtenerCantidadObras(lista, criterio);
-      // Variables para d3
-      const obras = this.obrasSeleccionadas;
+    borrarGrafica() {
       const grafica = d3.select('#grafica');
-      const cuerpo = d3.select('#cuerpo');
+      grafica.remove();
+    },
 
-      const max = d3.max(obras, (d) => d.cantidad);
-      const maxDomain = 700;
-      const anchoContenedor = 1000;
-      const altoContenedor = 400;
-      const altura = 270;
-      const amountScale = d3.scaleLinear().domain([0, max]).range([0, maxDomain]);
-
-      const scalePosition = d3
-        .scaleBand()
-        .range([0, altura])
-        .domain(obras.map((d) => d.nombre));
-      scalePosition.padding(0.8);
-
-      // Ejes
-      const xAxis = d3.axisBottom(amountScale);
-      const yAxis = d3.axisLeft(scalePosition);
-      let textoEje = '';
-
-      // Limpiar lienzo
-      cuerpo.selectAll('rect').remove();
-      cuerpo.selectAll('circle').remove();
-      grafica.selectAll('.textoEje').remove();
-
-      const join = cuerpo.selectAll('rect').data(obras);
-
-      grafica.style('width', anchoContenedor).style('height', altoContenedor);
-
-      // Dibujar líneas
-      join
-        .enter()
-        .append('rect')
-        .style('fill', '#af2828')
-        .style('stroke', '#af2828')
-        .style('width', (d) => amountScale(d.cantidad))
-        .style('height', 0.1) // scalePosition.bandwidth()
-        .style('y', (d) => scalePosition(d.nombre));
-      // Dibujar círculos
-      join
-        .enter()
-        .append('circle')
-        .style('stroke', '#af2828')
-        .style('fill', '#af2828')
-        .attr('r', 4)
-        .attr('cx', (d) => amountScale(d.cantidad))
-        .attr('cy', (d) => scalePosition(d.nombre));
-
-      xAxis.ticks(10);
-      d3.select('#xAxis')
-        .call(xAxis)
-        .attr('transform', `translate(180, ${altura + 50})`);
-      d3.select('#xAxis')
-        .append('text')
-        .text('Cantidad')
-        .attr('class', 'textoEje')
-        .attr('transform', `translate(${maxDomain + 25}, 5)`)
-        .style('fill', '#af2828');
-
-      textoEje = this.limpiarTexto(criterio);
-
-      d3.select('#yAxis').call(yAxis).attr('transform', 'translate(180, 50)');
-      d3.select('#yAxis')
-        .append('text')
-        .text(textoEje)
-        .attr('class', 'textoEje')
-        .attr('transform', 'translate(0, -5)')
-        .style('fill', '#af2828');
+    graficarBurbujas(lista, criterio) {
+      this.obtenerCantidadObras(lista, criterio);
+      // Dimensiones
+      /*  const margen = { superior: 40, derecho: 150, inferior: 60, izquierdo: 30 };
+      const ancho = 500 - margen.izquierdo - margen.derecho;
+      const altura = 420 - margen.superior - margen.inferior;
+ */
+      // Agregar el objeto svg al cuerpo de la página
+      /*   const svg = d3
+        .select('#grafica')
+        .append('svg')
+        .attr('width', ancho + margen.izquierdo + margen.derecho)
+        .attr('height', altura + margen.superior + margen.inferior)
+        .append('g')
+        .attr('transform', 'translate(' + margen.izquierdo + ',' + margen.superior + ')');
+ */
+      // Agregar eje X
+      // const x = d3.scaleLinear().domain;
     },
 
     // TODO: pasar esta función a utilidades-ayudas

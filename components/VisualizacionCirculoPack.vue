@@ -2,20 +2,18 @@
   <div id="contenedor-grafica">
     <!-- Barras -->
     <svg id="grafica">
-      <g id="cuerpo" style="transform: translate(180px, 52px)"></g>
-      <g id="yAxis"></g>
-      <g id="xAxis"></g>
+      <g id="cuerpo"></g>
     </svg>
     <div>
       <span id="boton">
         <div class="pantalla">
-          <h3 class="seccion" @click="desplegar">Graficar cantidad de obras por:</h3>
+          <h3 class="seccion" @click="desplegar">Graficar círculos por:</h3>
           <ul class="menu-propiedades">
             <li
               v-for="(propiedad, i) in propiedades"
               id="propiedad"
               :key="`propiedad${i}`"
-              @click="graficarBarras(obras, propiedad.menu)"
+              @click="graficarCirculos(obras, propiedad.menu)"
             >
               {{ propiedad.nombre }}
             </li>
@@ -29,6 +27,7 @@
 <script>
 import * as d3 from 'd3';
 import { gql } from 'nuxt-graphql-request';
+import { forceManyBody } from 'd3';
 
 export default {
   layout: 'conBuscador',
@@ -44,7 +43,7 @@ export default {
   async fetch() {
     const query = gql`
       query {
-        obra(limit: 9999) {
+        obra(limit: 100) {
           arca_id
           fechas_actividad
           ubicacion_actual {
@@ -178,79 +177,136 @@ export default {
       }
     },
 
-    graficarBarras(lista, criterio) {
+    borrarGrafica() {
+      const grafica = d3.select('#grafica');
+      grafica.remove();
+    },
+
+    graficarCirculos(lista, criterio) {
       this.obtenerCantidadObras(lista, criterio);
+
       // Variables para d3
       const obras = this.obrasSeleccionadas;
+
+      // Dimensiones
+      const margen = { superior: 40, derecho: 150, inferior: 60, izquierdo: 30 };
+      const ancho = 500 - margen.izquierdo - margen.derecho;
+      const altura = 500 - margen.superior - margen.inferior;
       const grafica = d3.select('#grafica');
-      const cuerpo = d3.select('#cuerpo');
-
-      const max = d3.max(obras, (d) => d.cantidad);
-      const maxDomain = 700;
-      const anchoContenedor = 1000;
-      const altoContenedor = 400;
-      const altura = 270;
-      const amountScale = d3.scaleLinear().domain([0, max]).range([0, maxDomain]);
-
-      const scalePosition = d3
-        .scaleBand()
-        .range([0, altura])
-        .domain(obras.map((d) => d.nombre));
-      scalePosition.padding(0.8);
-
-      // Ejes
-      const xAxis = d3.axisBottom(amountScale);
-      const yAxis = d3.axisLeft(scalePosition);
-      let textoEje = '';
 
       // Limpiar lienzo
-      cuerpo.selectAll('rect').remove();
-      cuerpo.selectAll('circle').remove();
-      grafica.selectAll('.textoEje').remove();
+      d3.select('#cuerpo').selectAll('g').remove();
 
-      const join = cuerpo.selectAll('rect').data(obras);
+      // Ajustar tamaño del contenedor
+      grafica.style('width', ancho).style('height', altura);
 
-      grafica.style('width', anchoContenedor).style('height', altoContenedor);
+      // Agregar el objeto svg al cuerpo de la página
+      const svg = d3
+        .select('#cuerpo')
+        .append('svg')
+        .attr('width', ancho + margen.izquierdo + margen.derecho)
+        .attr('height', altura + margen.superior + margen.inferior);
 
-      // Dibujar líneas
-      join
-        .enter()
-        .append('rect')
-        .style('fill', '#af2828')
-        .style('stroke', '#af2828')
-        .style('width', (d) => amountScale(d.cantidad))
-        .style('height', 0.1) // scalePosition.bandwidth()
-        .style('y', (d) => scalePosition(d.nombre));
-      // Dibujar círculos
-      join
+      /*  // Paleta de color por continentes
+      var color = d3.scaleOrdinal().domain(['Asia', 'Europe', 'Africa', 'Oceania', 'Americas']).range(d3.schemeSet1);
+ */
+      // Escala de tamaño secún criterio
+      const max = d3.max(obras, (d) => d.cantidad);
+      const size = d3.scaleLinear().domain([0, max]).range([7, 55]);
+
+      /*
+      // Crear un tooltip ¿?
+      const tooltip = d3
+        .select('#contenedor-grafica')
+        .append('div')
+        .style('opacity', 0)
+        .attr('class', 'tooltip')
+        .style('background-color', 'white')
+        .style('border', 'solid')
+        .style('border-width', '2px')
+        .style('border-radius', '5px')
+        .style('padding', '5px');
+*/
+      // Tres funciones que cambian el tooltip en el hover
+      /*  const mouseover = function (d) {
+        tooltip.style('opacity', 1);
+      }; */
+
+      // No reconoce d3.mouse
+      /* const mousemove = function (d) {
+        console.log(d);
+        tooltip.html('<u>' + d + '</u>' + '<br>' + d.cantidad + 'obras');
+        // .style('left', d3.pointer}(this)[0] + 20 + 'px')
+        // .style('top', d3.pointer(this)[1]);
+      }; */
+
+      /* const mouseleave = function (d) {
+        tooltip.style('opacity', 0);
+      }; */
+
+      // Initialize the circle: all located at the center of the svg area
+      const node = svg
+        .append('g')
+        .selectAll('circle')
+        .data(obras)
         .enter()
         .append('circle')
-        .style('stroke', '#af2828')
-        .style('fill', '#af2828')
-        .attr('r', 4)
-        .attr('cx', (d) => amountScale(d.cantidad))
-        .attr('cy', (d) => scalePosition(d.nombre));
+        .attr('class', 'node')
+        .attr('r', function (d) {
+          return size(d.cantidad);
+        })
+        .attr('cx', ancho / 2)
+        .attr('cy', altura / 2)
+        .style('fill', 'blue')
+        .style('fill-opacity', 0.8)
+        .attr('stroke', 'black')
+        .style('stroke-width', 1);
+      // .on('mouseover', mouseover)
+      // .on('click', function (d) {
+      // tooltip.html('<u>' + d.nombre + '</u>' + '<br>' + d.cantidad + 'obras');
+      // .style('left', d3.pointer}(this)[0] + 20 + 'px')
+      // .style('top', d3.pointer(this)[1]);
+      // })
+      // .on('mouseleave', mouseleave);
+      // .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)); // llama una función específica cuando el círculo es arrastrado;
 
-      xAxis.ticks(10);
-      d3.select('#xAxis')
-        .call(xAxis)
-        .attr('transform', `translate(180, ${altura + 50})`);
-      d3.select('#xAxis')
-        .append('text')
-        .text('Cantidad')
-        .attr('class', 'textoEje')
-        .attr('transform', `translate(${maxDomain + 25}, 5)`)
-        .style('fill', '#af2828');
+      // Fuerzas aplicadas a los nodos
+      const simulacion = d3
+        .forceSimulation()
+        .force(
+          'center',
+          d3
+            .forceCenter()
+            .x(ancho / 2) // Atracción hacia el centro del área svg
 
-      textoEje = this.limpiarTexto(criterio);
+            .y(altura / 2)
+        )
+        .force('charge', forceManyBody().strength(0.1)) // Los nodos son atraídos entre sí si el valor es > 0
+        .force(
+          'collide',
+          d3
+            .forceCollide()
+            .strength(0.2)
+            .radius(function (d) {
+              return size(d.cantidad) + 3;
+            })
+            .iterations(1) // Fuerza que evita que los círculos se superpongan
+        );
 
-      d3.select('#yAxis').call(yAxis).attr('transform', 'translate(180, 50)');
-      d3.select('#yAxis')
-        .append('text')
-        .text(textoEje)
-        .attr('class', 'textoEje')
-        .attr('transform', 'translate(0, -5)')
-        .style('fill', '#af2828');
+      // Apply these forces to the nodes and update their positions.
+      // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
+      simulacion.nodes(obras).on('tick', function (d) {
+        node
+          .attr('cx', function (d) {
+            return d.x;
+          })
+          .attr('cy', function (d) {
+            return d.y;
+          });
+      });
+
+      // Agregar eje X
+      // const x = d3.scaleLinear().domain;
     },
 
     // TODO: pasar esta función a utilidades-ayudas

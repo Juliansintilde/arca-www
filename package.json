@@ -17,7 +17,9 @@
     "server:restart": "pm2 restart ecosystem.config.js"
   },
   "dependencies": {
+    "@types/d3": "^7.1.0",
     "core-js": "^3.21.0",
+    "d3": "^7.3.0",
     "mapbox-gl": "^2.7.0",
     "nuxt": "^2.15.8"
   },
