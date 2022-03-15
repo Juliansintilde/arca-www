@@ -1,6 +1,5 @@
 <template>
   <div id="contenedor-grafica">
-    <!-- Barras -->
     <svg id="grafica">
       <g id="cuerpo"></g>
     </svg>
@@ -210,41 +209,49 @@ export default {
       /*  // Paleta de color por continentes
       var color = d3.scaleOrdinal().domain(['Asia', 'Europe', 'Africa', 'Oceania', 'Americas']).range(d3.schemeSet1);
  */
-      // Escala de tamaño secún criterio
+      // Escala de tamaño según criterio
       const max = d3.max(obras, (d) => d.cantidad);
       const size = d3.scaleLinear().domain([0, max]).range([7, 55]);
 
-      /*
       // Crear un tooltip ¿?
       const tooltip = d3
         .select('#contenedor-grafica')
         .append('div')
         .style('opacity', 0)
         .attr('class', 'tooltip')
-        .style('background-color', 'white')
+        .style('background-color', '#fffdf8')
+        .style('color', '#08173e')
         .style('border', 'solid')
-        .style('border-width', '2px')
+        .style('border-width', '1px')
         .style('border-radius', '5px')
-        .style('padding', '5px');
-*/
+        .style('border-color', '#af2828')
+        .style('padding', '5px')
+        .style('position', 'absolute')
+        .style('width', '200px');
+
       // Tres funciones que cambian el tooltip en el hover
-      /*  const mouseover = function (d) {
-        tooltip.style('opacity', 1);
-      }; */
+      const mouseover = function (d) {
+        tooltip.style('opacity', 0.9);
+      };
 
-      // No reconoce d3.mouse
-      /* const mousemove = function (d) {
-        console.log(d);
-        tooltip.html('<u>' + d + '</u>' + '<br>' + d.cantidad + 'obras');
-        // .style('left', d3.pointer}(this)[0] + 20 + 'px')
-        // .style('top', d3.pointer(this)[1]);
-      }; */
+      // Mostrar tooltip al mover el mouse
+      const mousemove = function (d) {
+        const pos = d3.pointer(d, this);
+        const nombre = d.srcElement.__data__.nombre;
+        const cantidad = d.toElement.__data__.cantidad;
+        tooltip
+          .html('<b>' + nombre + ':' + '</b>' + '<br>' + cantidad + ' obras')
+          .style('opacity', 0.9)
+          .style('top', pos[1] + 120 + 'px')
+          .style('left', pos[0] + 190 + 'px');
+      };
 
-      /* const mouseleave = function (d) {
+      // Ocultar tooltip al salir del círculo
+      const mouseleave = function () {
         tooltip.style('opacity', 0);
-      }; */
+      };
 
-      // Initialize the circle: all located at the center of the svg area
+      // Inicializar los círculos en el área svg
       const node = svg
         .append('g')
         .selectAll('circle')
@@ -257,17 +264,13 @@ export default {
         })
         .attr('cx', ancho / 2)
         .attr('cy', altura / 2)
-        .style('fill', 'blue')
-        .style('fill-opacity', 0.8)
-        .attr('stroke', 'black')
-        .style('stroke-width', 1);
-      // .on('mouseover', mouseover)
-      // .on('click', function (d) {
-      // tooltip.html('<u>' + d.nombre + '</u>' + '<br>' + d.cantidad + 'obras');
-      // .style('left', d3.pointer}(this)[0] + 20 + 'px')
-      // .style('top', d3.pointer(this)[1]);
-      // })
-      // .on('mouseleave', mouseleave);
+        .style('fill', '#af2828')
+        .style('fill-opacity', 0.9)
+        .attr('stroke', '#08173e')
+        .style('stroke-width', 1)
+        .on('mouseover', mouseover)
+        .on('mousemove', mousemove)
+        .on('mouseleave', mouseleave);
       // .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)); // llama una función específica cuando el círculo es arrastrado;
 
       // Fuerzas aplicadas a los nodos
@@ -278,7 +281,6 @@ export default {
           d3
             .forceCenter()
             .x(ancho / 2) // Atracción hacia el centro del área svg
-
             .y(altura / 2)
         )
         .force('charge', forceManyBody().strength(0.1)) // Los nodos son atraídos entre sí si el valor es > 0
@@ -293,9 +295,8 @@ export default {
             .iterations(1) // Fuerza que evita que los círculos se superpongan
         );
 
-      // Apply these forces to the nodes and update their positions.
-      // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
-      simulacion.nodes(obras).on('tick', function (d) {
+      // Aplicar las fuerzas a los nodos y actualizar sus posiciones
+      simulacion.nodes(obras).on('tick', function () {
         node
           .attr('cx', function (d) {
             return d.x;
@@ -304,9 +305,6 @@ export default {
             return d.y;
           });
       });
-
-      // Agregar eje X
-      // const x = d3.scaleLinear().domain;
     },
 
     // TODO: pasar esta función a utilidades-ayudas
