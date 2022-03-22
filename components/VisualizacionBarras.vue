@@ -1,27 +1,25 @@
 <template>
-  <div id="contenedor-grafica">
-    <!-- Barras -->
-    <svg id="grafica">
-      <g id="cuerpo" style="transform: translate(180px, 52px)"></g>
+  <div id="contenedor-grafica-barras">
+    <h3>Barras</h3>
+    <svg id="grafica-barras" height="0">
+      <g id="cuerpo-barras"></g>
       <g id="yAxis"></g>
       <g id="xAxis"></g>
     </svg>
-    <div>
-      <span id="boton">
-        <div class="pantalla">
-          <h3 class="seccion" @click="desplegar">Graficar cantidad de obras por:</h3>
-          <ul class="menu-propiedades">
-            <li
-              v-for="(propiedad, i) in propiedades"
-              id="propiedad"
-              :key="`propiedad${i}`"
-              @click="graficarBarras(obras, propiedad.menu)"
-            >
-              {{ propiedad.nombre }}
-            </li>
-          </ul>
-        </div>
-      </span>
+
+    <div class="opciones" @click="desplegar">
+      <h4 class="seccion">Graficar por &#9662;</h4>
+      <ul>
+        <li
+          v-for="(propiedad, i) in propiedades"
+          id="propiedad"
+          :key="`propiedad${i}`"
+          class="enlace-menu"
+          @click="graficarBarras(obras, propiedad.menu)"
+        >
+          {{ propiedad.nombre }}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -44,7 +42,7 @@ export default {
   async fetch() {
     const query = gql`
       query {
-        obra(limit: 9999) {
+        obra(limit: 200) {
           arca_id
           fechas_actividad
           ubicacion_actual {
@@ -182,13 +180,14 @@ export default {
       this.obtenerCantidadObras(lista, criterio);
       // Variables para d3
       const obras = this.obrasSeleccionadas;
-      const grafica = d3.select('#grafica');
-      const cuerpo = d3.select('#cuerpo');
+      const grafica = d3.select('#grafica-barras');
+      const cuerpo = d3.select('#cuerpo-barras');
 
       const max = d3.max(obras, (d) => d.cantidad);
       const maxDomain = 700;
       const anchoContenedor = 1000;
       const altoContenedor = 400;
+      const desplazarGrafica = { x: 150, y: 50 };
       const altura = 270;
       const amountScale = d3.scaleLinear().domain([0, max]).range([0, maxDomain]);
 
@@ -208,6 +207,7 @@ export default {
       cuerpo.selectAll('circle').remove();
       grafica.selectAll('.textoEje').remove();
 
+      cuerpo.attr('transform', `translate(${desplazarGrafica.x}, ${desplazarGrafica.y})`);
       const join = cuerpo.selectAll('rect').data(obras);
 
       grafica.style('width', anchoContenedor).style('height', altoContenedor);
@@ -234,7 +234,7 @@ export default {
       xAxis.ticks(10);
       d3.select('#xAxis')
         .call(xAxis)
-        .attr('transform', `translate(180, ${altura + 50})`);
+        .attr('transform', `translate(${desplazarGrafica.x}, ${altura + desplazarGrafica.y})`);
       d3.select('#xAxis')
         .append('text')
         .text('Cantidad')
@@ -244,7 +244,7 @@ export default {
 
       textoEje = this.limpiarTexto(criterio);
 
-      d3.select('#yAxis').call(yAxis).attr('transform', 'translate(180, 50)');
+      d3.select('#yAxis').call(yAxis).attr('transform', `translate(${desplazarGrafica.x}, ${desplazarGrafica.y})`);
       d3.select('#yAxis')
         .append('text')
         .text(textoEje)
@@ -266,11 +266,59 @@ export default {
 <style lang="scss" scoped>
 @use 'sass:math';
 
-#contenedor-grafica {
+#contenedor-grafica-barras {
+  display: flex;
+  margin-top: 2%;
   margin-left: 5%;
 }
-#grafica {
+#grafica-barras {
   height: inherit;
-  margin: 0em;
+  margin: 3em 0em 2em -4em;
+  background-color: $mediana;
+  border-radius: 10px;
+}
+.opciones {
+  margin: 2.5em 0em 0em 2em;
+  height: 1.7em;
+  overflow: hidden;
+  cursor: pointer;
+  &.abierto {
+    height: fit-content;
+  }
+  ul {
+    margin-left: 0em;
+  }
+  li {
+    margin-bottom: 0em;
+  }
+}
+
+ul {
+  margin-right: 0.2em;
+  margin-left: 0.8em;
+  padding-top: 0.5em;
+  font-family: $fuenteMenu;
+
+  &.opciones {
+    overflow: visible;
+  }
+}
+
+.enlace-menu {
+  margin-bottom: 0.4em;
+  font-size: 0.85em;
+  position: relative;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    display: block;
+    background-color: $dolor;
+    position: absolute;
+    left: -9px;
+    top: 0.5em;
+  }
 }
 </style>

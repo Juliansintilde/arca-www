@@ -1,24 +1,27 @@
 <template>
-  <div id="contenedor-grafica">
-    <svg id="grafica">
-      <g id="cuerpo"></g>
-    </svg>
+  <div id="contenedor-general-circulos">
+    <div id="contenedor-grafica-circulos" @click="verOcultar">
+      <h3>Círculos</h3>
+
+      <svg id="grafica-circulos" height="0">
+        <g id="cuerpo-circulos"></g>
+      </svg>
+    </div>
     <div>
-      <span id="boton">
-        <div class="pantalla">
-          <h3 class="seccion" @click="desplegar">Graficar círculos por:</h3>
-          <ul class="menu-propiedades">
-            <li
-              v-for="(propiedad, i) in propiedades"
-              id="propiedad"
-              :key="`propiedad${i}`"
-              @click="graficarCirculos(obras, propiedad.menu)"
-            >
-              {{ propiedad.nombre }}
-            </li>
-          </ul>
-        </div>
-      </span>
+      <div class="opciones" @click="desplegar">
+        <h4 class="seccion">Graficar por &#9662;</h4>
+        <ul>
+          <li
+            v-for="(propiedad, i) in propiedades"
+            id="propiedad"
+            :key="`propiedad${i}`"
+            class="enlace-menu"
+            @click="graficarCirculos(obras, propiedad.menu)"
+          >
+            {{ propiedad.nombre }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -115,6 +118,10 @@ export default {
       const contenedor = evento.target.parentElement;
       contenedor.classList.toggle('abierto');
     },
+    verOcultar(evento) {
+      const contenedor = evento.target.parentElement;
+      contenedor.classList.toggle('oculto');
+    },
     crearSet(lista, criterio) {
       this.ordenarLista(lista, criterio);
       const listaCriterio = [];
@@ -171,13 +178,12 @@ export default {
     },
     mostrarDatos(lista, criterio = '') {
       for (const item of lista) {
-        // eslint-disable-next-line dot-notation
         this.escribir(item[criterio]);
       }
     },
 
     borrarGrafica() {
-      const grafica = d3.select('#grafica');
+      const grafica = d3.select('#grafica-circulos');
       grafica.remove();
     },
 
@@ -188,20 +194,20 @@ export default {
       const obras = this.obrasSeleccionadas;
 
       // Dimensiones
-      const margen = { superior: 40, derecho: 150, inferior: 60, izquierdo: 30 };
+      const margen = { superior: 50, derecho: 150, inferior: 70, izquierdo: 30 };
       const ancho = 500 - margen.izquierdo - margen.derecho;
       const altura = 500 - margen.superior - margen.inferior;
-      const grafica = d3.select('#grafica');
+      const grafica = d3.select('#grafica-circulos');
 
       // Limpiar lienzo
-      d3.select('#cuerpo').selectAll('g').remove();
+      d3.select('#cuerpo-circulos').selectAll('g').remove();
 
       // Ajustar tamaño del contenedor
       grafica.style('width', ancho).style('height', altura);
 
       // Agregar el objeto svg al cuerpo de la página
       const svg = d3
-        .select('#cuerpo')
+        .select('#cuerpo-circulos')
         .append('svg')
         .attr('width', ancho + margen.izquierdo + margen.derecho)
         .attr('height', altura + margen.superior + margen.inferior);
@@ -213,9 +219,9 @@ export default {
       const max = d3.max(obras, (d) => d.cantidad);
       const size = d3.scaleLinear().domain([0, max]).range([7, 55]);
 
-      // Crear un tooltip ¿?
+      // Crear un tooltip
       const tooltip = d3
-        .select('#contenedor-grafica')
+        .select('#contenedor-general-circulos')
         .append('div')
         .style('opacity', 0)
         .attr('class', 'tooltip')
@@ -230,8 +236,9 @@ export default {
         .style('width', '200px');
 
       // Tres funciones que cambian el tooltip en el hover
-      const mouseover = function (d) {
+      const mouseover = function () {
         tooltip.style('opacity', 0.9);
+        tooltip.style('z-index', 99);
       };
 
       // Mostrar tooltip al mover el mouse
@@ -240,7 +247,7 @@ export default {
         const nombre = d.srcElement.__data__.nombre;
         const cantidad = d.toElement.__data__.cantidad;
         tooltip
-          .html('<b>' + nombre + ':' + '</b>' + '<br>' + cantidad + ' obras')
+          .html('<b>' + nombre + '</b>' + '<br>' + cantidad + ' obras')
           .style('opacity', 0.9)
           .style('top', pos[1] + 120 + 'px')
           .style('left', pos[0] + 190 + 'px');
@@ -320,11 +327,67 @@ export default {
 <style lang="scss" scoped>
 @use 'sass:math';
 
-#contenedor-grafica {
+#contenedor-general-circulos {
+  display: flex;
+  margin-top: 2%;
   margin-left: 5%;
 }
-#grafica {
+#contenedor-grafica-circulos {
+  height: fit-content;
+  overflow: visible;
+  &.oculto {
+    height: 1.7em;
+    overflow: hidden;
+  }
+}
+#grafica-circulos {
   height: inherit;
-  margin: 0em;
+  margin: 1em 0em 2em 0em;
+  background-color: $mediana;
+  border-radius: 10px;
+}
+.opciones {
+  margin: 2.5em 0em 0em 2em;
+  height: 1.7em;
+  overflow: hidden;
+  cursor: pointer;
+  &.abierto {
+    height: fit-content;
+  }
+  ul {
+    margin-left: 0em;
+  }
+  li {
+    margin-bottom: 0em;
+  }
+}
+
+ul {
+  margin-right: 0.2em;
+  margin-left: 0.8em;
+  padding-top: 0.5em;
+  font-family: $fuenteMenu;
+
+  &.opciones {
+    overflow: visible;
+  }
+}
+
+.enlace-menu {
+  margin-bottom: 0.4em;
+  font-size: 0.85em;
+  position: relative;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    display: block;
+    background-color: $dolor;
+    position: absolute;
+    left: -9px;
+    top: 0.5em;
+  }
 }
 </style>

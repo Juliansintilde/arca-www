@@ -8,8 +8,8 @@
 
     <section v-else class="contenido">
       <MenuVistas />
-      <nuxt-link class="enlace-archivo" to="/archivo/paises">Lugares</nuxt-link>
-      <!-- <VisualizacionBarras :obras="obras" /> -->
+      <h2 class="subtitulo-importante">Visualizaciones</h2>
+      <VisualizacionBarras :obras="obras" />
       <VisualizacionCirculoPack :obras="obras" />
     </section>
   </div>
@@ -104,5 +104,14 @@ export default {
   &:hover {
     color: lighten($dolor, 20%);
   }
+}
+
+.subtitulo-importante {
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: $dolor;
+  font-size: 20px;
+  margin-left: 5%;
 }
 </style>
