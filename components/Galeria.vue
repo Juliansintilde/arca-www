@@ -42,6 +42,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  width: 83vw;
   // display: grid;
   // height: calc(100vh - 140px);
   // grid-gap: 10px;
