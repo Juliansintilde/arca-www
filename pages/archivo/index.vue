@@ -9,8 +9,8 @@
     <section v-else class="contenido">
       <MenuVistas />
       <h2 class="subtitulo-importante">Visualizaciones</h2>
-      <VisualizacionBarras :obras="obras" />
       <VisualizacionCirculoPack :obras="obras" />
+      <VisualizacionBarras :obras="obras" />
     </section>
   </div>
 </template>

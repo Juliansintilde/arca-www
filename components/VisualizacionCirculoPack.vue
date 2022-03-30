@@ -249,7 +249,7 @@ export default {
         tooltip
           .html('<b>' + nombre + '</b>' + '<br>' + cantidad + ' obras')
           .style('opacity', 0.9)
-          .style('top', pos[1] + 120 + 'px')
+          .style('top', pos[1] + 150 + 'px')
           .style('left', pos[0] + 190 + 'px');
       };
 
@@ -276,9 +276,11 @@ export default {
         .attr('stroke', '#08173e')
         .style('stroke-width', 1)
         .on('mouseover', mouseover)
-        .on('mousemove', mousemove)
-        .on('mouseleave', mouseleave);
+        .on('mousemove', mousemove);
+      // .on('mouseleave', mouseleave);
       // .call(d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)); // llama una función específica cuando el círculo es arrastrado;
+
+      tooltip.on('mouseleave', mouseleave);
 
       // Fuerzas aplicadas a los nodos
       const simulacion = d3
