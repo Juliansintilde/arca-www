@@ -70,7 +70,7 @@ export default {
             nombre
             lat
             lon
-          }
+            }
           }
           caracteristicas_particulares_lista_id {
             nombre

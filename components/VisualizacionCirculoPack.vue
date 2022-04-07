@@ -3,7 +3,7 @@
     <div id="contenedor-grafica-circulos" @click="verOcultar">
       <h3>Círculos</h3>
 
-      <svg id="grafica-circulos" height="0">
+      <svg id="grafica-circulos" height="100">
         <g id="cuerpo-circulos"></g>
       </svg>
     </div>

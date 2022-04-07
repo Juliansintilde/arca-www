@@ -1,7 +1,7 @@
 <template>
   <div id="contenedor-grafica-barras">
     <h3>Barras</h3>
-    <svg id="grafica-barras" height="0">
+    <svg id="grafica-barras" height="100">
       <g id="cuerpo-barras"></g>
       <g id="yAxis"></g>
       <g id="xAxis"></g>
@@ -185,7 +185,7 @@ export default {
 
       const max = d3.max(obras, (d) => d.cantidad);
       const maxDomain = 700;
-      const anchoContenedor = 1000;
+      const anchoContenedor = 1100;
       const altoContenedor = 400;
       const desplazarGrafica = { x: 150, y: 50 };
       const altura = 270;
