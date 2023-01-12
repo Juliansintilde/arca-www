@@ -1,28 +1,17 @@
-<template>
-  <div class="buscador">
-    <input v-model="searchQuery" type="search" placeholder="buscar" @keyup="validarBusqueda" />
-  </div>
-</template>
+<script setup>
+const busqueda = ref('');
+const ruta = useRouter();
 
-<script>
-export default {
-  name: 'SeccionBuscador',
-  data() {
-    return {
-      searchQuery: '',
-      obras: [],
-    };
-  },
-
-  methods: {
-    validarBusqueda(evento) {
-      if (evento.key === 'Enter') {
-        this.$router.push(`/archivo/${this.searchQuery}`);
-      }
-    },
-  },
-};
+function validarBusqueda(evento) {
+  if (evento.key === 'Enter') {
+    ruta.push({ path: `/archivo`, query: { busqueda: busqueda.value } });
+  }
+}
 </script>
+
+<template>
+  <input v-model="busqueda" type="search" placeholder="buscar" @keyup="validarBusqueda" />
+</template>
 
 <style lang="scss" scoped>
 input {
