@@ -10,7 +10,8 @@ if (!cerebro.datosCargados) {
 
 <template>
   <div id="contenedor">
-    <MenuGeneral />
+    <!-- <MenuGeneral /> -->
+    <Encabezado />
     <MenuBuscador />
     <main role="main">
       <slot />

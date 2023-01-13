@@ -52,8 +52,6 @@ autores.value = Array.from(inicialesAutores).sort();
       <h2 class="logo-texto">ARCA</h2>
     </NuxtLink>
 
-    <Buscador />
-
     <nav class="opcionesBuscador">
       <ul class="listaMenu">
         <li

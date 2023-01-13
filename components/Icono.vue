@@ -1,18 +1,26 @@
+<script setup>
+defineProps({
+  fondo: {
+    type: String,
+    default: 'transparent',
+  },
+  color: {
+    type: String,
+    default: 'black',
+  },
+});
+</script>
+
 <template>
   <svg
     id="logoArca"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    x="0px"
-    y="0px"
     viewBox="0 0 1000 1000"
-    style="enable-background: new 0 0 1000 1000"
-    xml:space="preserve"
-    width="50px"
+    :style="`background-color:${fondo}`"
+    :fill="color"
   >
     <path
-      class="logoArca"
       d="M984.45,948.82c-52.71-5.81-68.32-50.89-68.32-50.89L578.03,90.8c0,0-18.21-55.48-78.03-55.48
     S421.97,90.8,421.97,90.8L83.86,897.93c0,0-15.61,45.08-68.32,50.89c-4.11,0.45-7.3,3.78-7.3,7.92c0,4.39,3.56,7.95,7.95,7.95H500
     c5.2,0,483.8,0,483.8,0c4.39,0,7.95-3.56,7.95-7.95C991.75,952.6,988.56,949.27,984.45,948.82z M838.4,948.21
@@ -22,15 +30,3 @@
     />
   </svg>
 </template>
-
-<script>
-export default {
-  name: 'IconoArca',
-  props: {
-    fondo: {
-      type: String,
-      default: 'transparent',
-    },
-  },
-};
-</script>
